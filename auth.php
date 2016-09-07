@@ -3,6 +3,12 @@
 	include './upfile.php';
 	include "./util.php";
 
+	const DEF_INFO = "%E7%A6%8F%E5%88%A9";
+	const DEF_COUNT = "20";
+	const DEF_PAGE = "1";
+
+	const DEF_AUTH_FAILURE = "验证失败,默认值为:username=dla160504&password=12345678";
+
 	// 获取POST请求的数据,[]里面是key
 
 	// echo $_FILES["file"]["error"];
@@ -12,13 +18,13 @@
 	$count = getGetValue("count");
 	$page  = getGetValue("page");
 	if ($info == "") {
-		$info = "%E7%A6%8F%E5%88%A9";
+		$info = DEF_INFO;
 	}
 	if ($count == "") {
-		$count = "20";
+		$count = DEF_COUNT;
 	}
 	if ($page == "") {
-		$page = "1";
+		$page = DEF_PAGE;
 	}
 
 	# code...
@@ -33,17 +39,22 @@
 			$json = array("responseCode" => 1,"datas" => $response,"update" => getUploadFile());
 			echo json_encode($json);
 		}else{
-			$array = array("responseCode" => 0,"datas" => array(array("type" => "验证失败,默认POST请求username=dla160504&password=12345678")),"update" => getUploadFile());
-			echo json_encode($array);
+			echo_error();
 		}
 	}elseif (array_key_exists("file", $_FILES)) {
-		$array = array("responseCode" => 0,"datas" => array(array("type" => "验证失败,默认POST请求username=dla160504&password=12345678")),"update" => getUploadFile());
-			echo json_encode($array);
+		echo_error();
 	}else{
-		$array = array("responseCode" => 0,"datas" => array(array("type" => "验证失败,默认POST请求username=dla160504&password=12345678")),"update" => getUploadFile());
-			echo json_encode($array);
+		echo_error();
 	}
 
+	function echo_error(){
+		$array = array(
+			"responseCode" => 0,
+			"datas" => array("error" => true,"results" => array(array("type" => DEF_AUTH_FAILURE))),
+			"update" => getUploadFile()
+			);
+			echo json_encode($array);
+	}
 	
 
 	// function getPostValue($key){
